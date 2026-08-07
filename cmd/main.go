@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"net/http"
+	"news-service/internal/handler"
 	"news-service/internal/parser"
 	"news-service/internal/repository"
 )
@@ -38,6 +39,7 @@ func main() {
 	}
 	fmt.Println("Статьи сохранены")
 
+	http.HandleFunc("/articles", handler.GetArticles(conn))
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Ok")
 	})

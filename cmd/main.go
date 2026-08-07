@@ -24,6 +24,13 @@ func main() {
 	defer conn.Close(context.Background())
 	fmt.Println("БД подлючена!")
 
+	err = repository.Migrate(conn)
+	if err != nil {
+		fmt.Println("Ошибка", err)
+		return
+	}
+	fmt.Println("Миграция выполнена!")
+
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Ok")
 	})

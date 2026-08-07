@@ -30,6 +30,13 @@ func main() {
 		return
 	}
 	fmt.Println("Миграция выполнена!")
+	for _, item := range items {
+		err = repository.SaveArticle(conn, item)
+		if err != nil {
+			fmt.Println("ОШибка сохранения", err)
+		}
+	}
+	fmt.Println("Статьи сохранены")
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Ok")

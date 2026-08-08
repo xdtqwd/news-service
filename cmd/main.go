@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"net/http"
 	"news-service/internal/handler"
@@ -43,6 +44,22 @@ func main() {
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Ok")
 	})
+	go func() {
+		ticker := time.NewTicker(10 * time.Second)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			items, err := parser.Parse("https://feeds.bbci.co.uk/news/rss.xml")
+			if err != nil {
+				fmt.Println("Ошибка парсинга", err)
+				continue
+			}
+			for _, item := range items {
+				repository.SaveArticle(conn, item)
+			}
+			fmt.Println("Статьи Обновленны")
+		}
+	}()
 
 	http.ListenAndServe(":8080", nil)
 }
